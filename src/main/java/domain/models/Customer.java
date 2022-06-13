@@ -4,8 +4,15 @@ import java.util.Objects;
 
 public class Customer {
     private String name;
+    private String surname;
     private String password;
     private int money;
+
+    public Customer(String name, String surname, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.password = password;
+    }
 
     public Customer(String name, String password) {
         this.name = name;
@@ -61,5 +68,15 @@ public class Customer {
 
     public void setMoney(int money) {
         this.money = money;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", password='" + password + '\'' +
+                ", money=" + money +
+                '}';
     }
 }

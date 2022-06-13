@@ -31,11 +31,11 @@ public class CustomerUtils {
 
     public Customer getCustomerByName(String name) {
         Customer customer = null;
-        try {
-            customer = customerDAO.getByName(name);
-        } catch (DAOException e) {
-            throw new IllegalArgumentException();
-        }
+//        try {
+//            customer = customerDAO.getIdByName()ByName(name);
+//        } catch (DAOException e) {
+//            throw new IllegalArgumentException();
+//        }
         return customer;
     }
 
@@ -43,7 +43,7 @@ public class CustomerUtils {
         Customer customer = null;
         int id = -1;
         try {
-            customer = customerDAO.getByName(name);
+            customer = null;// = customerDAO.getByName(name);
             id = customerDAO.getIdByCustomer(customer);
         } catch (DAOException e) {
             e.printStackTrace();
