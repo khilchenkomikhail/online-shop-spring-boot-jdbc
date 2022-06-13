@@ -18,6 +18,16 @@ public class CustomerDAO {
         return new Customer(map.get(id));
     }
 
+    public Customer getByName(String name) throws DAOException{
+        for (Map.Entry<Integer, Customer> entry:
+             map.entrySet()) {
+            if (entry.getValue().getName().equals(name)) {
+                return entry.getValue();
+            }
+        }
+        throw new DAOException();
+    }
+
     public int addCustomer(Customer customer) {
         map.put(nextId, new Customer(customer));
         return nextId++;

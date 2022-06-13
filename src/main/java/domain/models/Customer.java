@@ -5,7 +5,7 @@ import java.util.Objects;
 public class Customer {
     private String name;
     private String password;
-    private int credit;
+    private int money;
 
     public Customer(String name, String password) {
         this.name = name;
@@ -17,26 +17,26 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return credit == customer.credit && Objects.equals(name, customer.name) && Objects.equals(password, customer.password);
+        return money == customer.money && Objects.equals(name, customer.name) && Objects.equals(password, customer.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, password, credit);
+        return Objects.hash(name, password, money);
     }
 
     public Customer(Customer otherCustomer) {
         this.name = new String(otherCustomer.getName());
         this.password = new String(otherCustomer.getPassword());
-        this.credit = otherCustomer.getCredit();
+        this.money = otherCustomer.getMoney();
     }
 
-    public void addCredit(int money) {
-        credit += money;
+    public void addMoney(int money) {
+        this.money += money;
     }
 
     public void subtractCredit(int money) {
-        credit -= money;
+        this.money -= money;
     }
 
     public String getName() {
@@ -55,11 +55,11 @@ public class Customer {
         this.password = password;
     }
 
-    public int getCredit() {
-        return credit;
+    public int getMoney() {
+        return money;
     }
 
-    public void setCredit(int credit) {
-        this.credit = credit;
+    public void setMoney(int money) {
+        this.money = money;
     }
 }

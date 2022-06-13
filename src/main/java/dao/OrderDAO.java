@@ -1,9 +1,12 @@
 package dao;
 
+import domain.models.Customer;
 import domain.models.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -35,6 +38,17 @@ public class OrderDAO {
             }
         }
         throw new DAOException();
+    }
+
+    public List<Order> getByCustomer(Customer customer) {
+        List<Order> list = new ArrayList<>();
+        for (Map.Entry<Integer, Order> entry:
+             map.entrySet()) {
+            if (entry.getValue().getCustomer().equals(customer)) {
+                list.add(entry.getValue());
+            }
+        }
+        return list;
     }
 
     public void updateById(int id, Order order) {
