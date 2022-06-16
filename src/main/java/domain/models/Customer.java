@@ -7,15 +7,11 @@ public class Customer {
     private String surname;
     private String password;
     private int money;
+    private int id;
 
     public Customer(String name, String surname, String password) {
         this.name = name;
         this.surname = surname;
-        this.password = password;
-    }
-
-    public Customer(String name, String password) {
-        this.name = name;
         this.password = password;
     }
 
@@ -36,6 +32,14 @@ public class Customer {
         this.name = new String(otherCustomer.getName());
         this.password = new String(otherCustomer.getPassword());
         this.money = otherCustomer.getMoney();
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public void addMoney(int money) {
@@ -68,6 +72,14 @@ public class Customer {
 
     public void setMoney(int money) {
         this.money = money;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

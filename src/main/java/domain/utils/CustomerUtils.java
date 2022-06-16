@@ -17,38 +17,41 @@ public class CustomerUtils {
     }
 
     public void addCustomer(Customer customer) {
-        customerDAO.addCustomer(customer);
+        try {
+            customerDAO.addCustomer(customer);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isValidCustomer(Customer customer) {
         try {
-            customerDAO.getIdByCustomer(customer);
-            return true;
+            int id = customerDAO.getIdByName(customer.getName(), customer.getSurname());
+            return customerDAO.getById(id).getPassword().equals(customer.getPassword());
         } catch (DAOException e) {
             return false;
         }
     }
 
-    public Customer getCustomerByName(String name) {
+    public Customer getCustomerByName(String name, String surname) {
         Customer customer = null;
-//        try {
-//            customer = customerDAO.getIdByName()ByName(name);
-//        } catch (DAOException e) {
-//            throw new IllegalArgumentException();
-//        }
+        try {
+            customer = customerDAO.getByName(name, surname);
+        } catch (DAOException e) {
+            throw new IllegalArgumentException();
+        }
         return customer;
     }
 
-    public void addMoneyToCustomer(String name, int money) {
+    public void addMoneyToCustomer(String name, String surname, int money) {
         Customer customer = null;
         int id = -1;
         try {
-            customer = null;// = customerDAO.getByName(name);
-            id = customerDAO.getIdByCustomer(customer);
+            customer = customerDAO.getByName(name, surname);
+            customer.addMoney(money);
+            customerDAO.updateMoney(customer);
         } catch (DAOException e) {
             e.printStackTrace();
         }
-        customer.addMoney(money);
-        customerDAO.updateById(id, customer);
     }
 }

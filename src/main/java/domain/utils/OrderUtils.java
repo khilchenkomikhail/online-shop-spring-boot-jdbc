@@ -8,6 +8,7 @@ import domain.models.OrderLine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -24,15 +25,15 @@ public class OrderUtils {
             throw new IllegalArgumentException();
         }
 
-        for (OrderLine line:
-                order.getOrderList()) {
-            orderLineDAO.addOrderLine(line);
-        }
-
-        orderDAO.addOrder(order);
+//        for (OrderLine line:
+//                order.getOrderList()) {
+//            orderLineDAO.addOrderLine(line);
+//        }
+//
+//        orderDAO.addOrder(order);
     }
 
     public List<Order> getAllByCustomer(Customer customer) {
-        return orderDAO.getByCustomer(customer);
+        return new ArrayList<>();//orderDAO.getByCustomer(customer);
     }
 }

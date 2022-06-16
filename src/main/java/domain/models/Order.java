@@ -7,32 +7,32 @@ import java.util.Objects;
 public class Order {
     private List<OrderLine> orderList;
     private Customer customer;
+    private int customer_id;
+    private int id;
+    private boolean isProcessed = false;
+
+    public Order() {
+    }
 
     public Order(Customer customer) {
         orderList = new ArrayList<>();
         this.customer = customer;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return Objects.equals(orderList, order.orderList) && Objects.equals(customer, order.customer);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderList, customer);
-    }
-
     public Order(Order otherOrder) {
-        this.orderList = new ArrayList<>();
-        for (OrderLine line:
-                otherOrder.getOrderList()) {
-            this.orderList.add(new OrderLine(line));
+        if (otherOrder.orderList != null) {
+            this.orderList = new ArrayList<>();
+            for (OrderLine line :
+                    otherOrder.getOrderList()) {
+                this.orderList.add(new OrderLine(line));
+            }
         }
-        this.customer = new Customer(otherOrder.getCustomer());
+        if (otherOrder.customer != null) {
+            this.customer = new Customer(otherOrder.getCustomer());
+        }
+        this.id = otherOrder.id;
+        this.customer_id = otherOrder.customer_id;
+        this.isProcessed = otherOrder.isProcessed;
     }
 
     public int getSum() {
@@ -42,6 +42,27 @@ public class Order {
             sum += line.getPrice();
         }
         return sum;
+    }
+
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public int getCustomer_id() {
+        return customer_id;
+    }
+
+    public void setCustomer_id(int customer_id) {
+        this.customer_id = customer_id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Customer getCustomer() {
@@ -58,5 +79,13 @@ public class Order {
 
     public void deleteOrderLine(OrderLine orderLine) {
         orderList.remove(orderLine);
+    }
+
+    public boolean isProcessed() {
+        return isProcessed;
+    }
+
+    public void setProcessed(boolean processed) {
+        isProcessed = processed;
     }
 }

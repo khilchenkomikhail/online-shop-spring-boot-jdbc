@@ -35,8 +35,11 @@ public class CustomerController {
     }
 
     @PostMapping("/sign-up-process")
-    public String create(@RequestParam("name") String name, @RequestParam("password") String password, Model model) {
-        Customer customer = new Customer(name, password);
+    public String create(@RequestParam("name") String name,
+                         @RequestParam("surname") String surname,
+                         @RequestParam("password") String password,
+                         Model model) {
+        Customer customer = new Customer(name, surname, password);
 
         customerUtils.addCustomer(customer);
 
@@ -46,11 +49,14 @@ public class CustomerController {
     }
 
     @GetMapping("/sign-in-process")
-    public String signInProcess(@RequestParam("name") String name, @RequestParam("password") String password, Model model) {
-        Customer tmpCustomer = new Customer(name, password);
+    public String signInProcess(@RequestParam("name") String name,
+                                @RequestParam("surname") String surname,
+                                @RequestParam("password") String password,
+                                Model model) {
+        Customer customer = customerUtils.getCustomerByName(name, surname);
 
-        if (customerUtils.isValidCustomer(tmpCustomer)) {
-            model.addAttribute("customer", tmpCustomer);
+        if (customer.getPassword().equals(password)) {
+            model.addAttribute("customer", customer);
             return "/customer-pages/customer-page";
         } else {
             return "/customer-pages/tmpplug";
@@ -58,11 +64,12 @@ public class CustomerController {
     }
 
     @PostMapping("/add-money")
-    public String addMoney(@RequestParam("customer") String customerName,
+    public String addMoney(@RequestParam("name") String name,
+                           @RequestParam("surname") String surname,
                            @RequestParam("money") int money,
                            Model model) {
-        customerUtils.addMoneyToCustomer(customerName, money);
-        model.addAttribute("customer", customerUtils.getCustomerByName(customerName));
+        customerUtils.addMoneyToCustomer(name, surname, money);
+        model.addAttribute("customer", customerUtils.getCustomerByName(name, surname));
         return "/customer-pages/customer-page";
     }
 }

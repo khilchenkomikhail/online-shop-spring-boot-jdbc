@@ -5,13 +5,18 @@
     <title>Customer</title>
 </head>
 <body>
-Customer: <a th:text="${customer.getName()}">USER</a>
+Customer name: <a th:text="${customer.getName()}">NAME</a>
+
+<br>
+
+Customer surname: <a th:text="${customer.getSurname()}">SURNAME</a>
 
 <br>
 
 Money: <a th:text="${customer.getMoney()}">CREDIT</a>
 <form method="post" action="http://localhost:8080/add-money">
-    <input name="customer" type="hidden" id="customer" th:value="${customer.getName()}">
+    <input name="name" type="hidden" id="name" th:value="${customer.getName()}">
+    <input name="surname" type="hidden" id=""surname th:value="${customer.getSurname()}">
     <input name="password" type="hidden" id=":password" th:value="${customer.getPassword()}">
     <label for="money">Add money</label>
     <input name="money" type="number" id="money">
@@ -20,6 +25,10 @@ Money: <a th:text="${customer.getMoney()}">CREDIT</a>
 
     <input type="submit" value="Add money">
 </form>
+
+<br>
+
+Cart:
 
 <br>
 
