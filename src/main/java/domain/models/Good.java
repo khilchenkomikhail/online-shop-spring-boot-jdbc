@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Good {
     private String name;
     private int cost;
+    private int id;
 
     public Good() {
     }
@@ -12,19 +13,7 @@ public class Good {
     public Good(Good otherGood) {
         this.name = new String(otherGood.getName());
         this.cost = otherGood.getCost();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Good good = (Good) o;
-        return cost == good.cost && name.equals(good.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, cost);
+        this.id = otherGood.id;
     }
 
     public String getName() {
@@ -41,5 +30,13 @@ public class Good {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

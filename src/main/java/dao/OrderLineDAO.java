@@ -67,7 +67,7 @@ public class OrderLineDAO {
             for (OrderLine line : list) {
                 statement = connection.prepareStatement(insertStr);
                 statement.setInt(1, line.getOrder_id());
-                statement.setInt(2, line.getOrder_id());
+                statement.setInt(2, line.getGood_id());
                 statement.setInt(3, line.getAmount());
                 statement.execute();
             }
@@ -84,6 +84,22 @@ public class OrderLineDAO {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+        }
+    }
+
+    public void deleteAllByOrderId(int orderId) throws DAOException {
+        String deleteStr = "delete from order_lines where order_id = cast(? as bigint);";
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = ConnectionFactory.getConnection();
+            statement = connection.prepareStatement(deleteStr);
+            statement.setInt(1, orderId);
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            throw new DAOException();
         }
     }
 }

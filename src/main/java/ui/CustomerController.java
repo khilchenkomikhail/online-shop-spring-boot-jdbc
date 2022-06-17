@@ -1,6 +1,7 @@
 package ui;
 
 import domain.models.Customer;
+import domain.models.Order;
 import domain.utils.CustomerUtils;
 import domain.utils.OrderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class CustomerController {
@@ -56,11 +60,21 @@ public class CustomerController {
         Customer customer = customerUtils.getCustomerByName(name, surname);
 
         if (customer.getPassword().equals(password)) {
+            addOrdersToModel(customer, model);
             model.addAttribute("customer", customer);
             return "/customer-pages/customer-page";
         } else {
             return "/customer-pages/tmpplug";
         }
+    }
+
+    @GetMapping("/main-page")
+    public String mainPage(@RequestParam("customer") int customer_id,
+                                Model model) {
+        Customer customer = customerUtils.getById(customer_id);
+        addOrdersToModel(customer, model);
+        model.addAttribute("customer", customer);
+        return "/customer-pages/customer-page";
     }
 
     @PostMapping("/add-money")
@@ -69,7 +83,46 @@ public class CustomerController {
                            @RequestParam("money") int money,
                            Model model) {
         customerUtils.addMoneyToCustomer(name, surname, money);
-        model.addAttribute("customer", customerUtils.getCustomerByName(name, surname));
+
+        Customer customer = customerUtils.getCustomerByName(name, surname);
+        model.addAttribute("customer", customer);
+        addOrdersToModel(customer, model);
         return "/customer-pages/customer-page";
+    }
+
+    @PostMapping("/pay-and-process-cart")
+    public String payProcessCart(@RequestParam("cart") int order_id,
+                                 @RequestParam("customer") int customer_id,
+                                 Model model) {
+        Order order = orderUtils.getById(order_id);
+        Customer customer = customerUtils.getById(customer_id);
+        if (!order.getOrderList().isEmpty() && customer.getMoney() > 0) {
+            orderUtils.processOrder(order, customer);
+        }
+        addOrdersToModel(customer, model);
+        model.addAttribute("customer", customer);
+        return "/customer-pages/customer-page";
+    }
+
+    private void addOrdersToModel(Customer customer, Model model) {
+        List<Order> orders = orderUtils.getAllByCustomer(customer);
+        List<Order> processedOrders = new ArrayList<>();
+        Order cart = null;
+        for (Order order : orders) {
+            if (order.isProcessed()) {
+                processedOrders.add(order);
+            } else {
+                if (cart == null) {
+                    cart = order;
+                } else {
+                    throw new IllegalStateException();
+                }
+            }
+        }
+        if (cart == null) {
+            cart = orderUtils.createNewOrder(customer);
+        }
+        model.addAttribute("orders", processedOrders);
+        model.addAttribute("cart", cart);
     }
 }

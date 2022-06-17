@@ -124,4 +124,45 @@ public class OrderDAO {
             }
         }
     }
+
+    public Order getById(int id) throws DAOException {
+        String selectStr = "select customer_id, is_processed from orders where id = cast(? as bigint);";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        Order order = null;
+
+        try {
+            connection = ConnectionFactory.getConnection();
+            statement = connection.prepareStatement(selectStr);
+            statement.setInt(1, id);
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            order = new Order();
+            order.setCustomer_id(resultSet.getInt(1));
+            order.setId(id);
+            order.setProcessed(resultSet.getBoolean(2));
+        } catch (SQLException throwables) {
+            throw new DAOException();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                statement.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                resultSet.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return order;
+    }
 }

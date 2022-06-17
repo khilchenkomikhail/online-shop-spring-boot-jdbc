@@ -44,6 +44,16 @@ public class Order {
         return sum;
     }
 
+    public void setOrderList(List<OrderLine> orderList) {
+        this.orderList = orderList;
+    }
+
+    public void clearOrder() {
+        if (isProcessed) {
+            throw new IllegalStateException();
+        }
+        orderList.clear();
+    }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
@@ -88,4 +98,5 @@ public class Order {
     public void setProcessed(boolean processed) {
         isProcessed = processed;
     }
+
 }

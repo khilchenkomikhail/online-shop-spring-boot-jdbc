@@ -34,6 +34,7 @@ public class CustomerDAO {
 
             customer = new Customer(name, surname, password);
             customer.setMoney(money);
+            customer.setId(id);
         } catch (SQLException throwables) {
             throw new DAOException();
         }

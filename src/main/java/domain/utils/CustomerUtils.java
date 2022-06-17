@@ -33,6 +33,15 @@ public class CustomerUtils {
         }
     }
 
+    public Customer getById(int id) {
+        try {
+            return customerDAO.getById(id);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Customer getCustomerByName(String name, String surname) {
         Customer customer = null;
         try {

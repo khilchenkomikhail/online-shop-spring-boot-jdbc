@@ -16,8 +16,8 @@ Customer surname: <a th:text="${customer.getSurname()}">SURNAME</a>
 Money: <a th:text="${customer.getMoney()}">CREDIT</a>
 <form method="post" action="http://localhost:8080/add-money">
     <input name="name" type="hidden" id="name" th:value="${customer.getName()}">
-    <input name="surname" type="hidden" id=""surname th:value="${customer.getSurname()}">
-    <input name="password" type="hidden" id=":password" th:value="${customer.getPassword()}">
+    <input name="surname" type="hidden" id="surname" th:value="${customer.getSurname()}">
+    <input name="password" type="hidden" id="password" th:value="${customer.getPassword()}">
     <label for="money">Add money</label>
     <input name="money" type="number" id="money">
 
@@ -32,7 +32,66 @@ Cart:
 
 <br>
 
+<table>
+    <thead>
+        <tr>
+            <th> Good </th>
+            <th> Amount </th>
+            <th> Price per Unit </th>
+            <th> Total price </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="line: ${cart.getOrderList()}">
+            <td><span th:text="${line.getGood().getName()}"> Good </span></td>
+            <td><span th:text="${line.getAmount()}"> Amount </span></td>
+            <td><span th:text="${line.getGood().getCost()}"> Price Per Unit </span></td>
+            <td><span th:text="${line.getAmount() * line.getGood().getCost()}"> Total price </span></td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+<br>
+
+<a th:href="@{http://localhost:8080/manage-cart(customer_id=${customer.getId()}, order_id=${cart.getId()})}">Manage cart</a>
+
+<br>
+<br>
+
+<form method="post" action="http://localhost:8080/pay-and-process-cart">
+    <input type="hidden" name="customer" th:value="${customer.getId()}">
+    <input type="hidden" name="cart" th:value="${cart.getId()}">
+    <input type="submit" value="Pay and Process Cart">
+</form>
+
+<br>
+<br>
+
 Orders:
+
+<br>
+
+<tr th:each="order: ${orders}">
+    <table>
+        <thead>
+        <tr>
+            <th> Good </th>
+            <th> Amount </th>
+            <th> Price per Unit </th>
+            <th> Total price </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="line: ${order.getOrderList()}">
+            <td><span th:text="${line.getGood().getName()}"> Good </span></td>
+            <td><span th:text="${line.getAmount()}"> Amount </span></td>
+            <td><span th:text="${line.getGood().getCost()}"> Price Per Unit </span></td>
+            <td><span th:text="${line.getAmount() * line.getGood().getCost()}"> Total price </span></td>
+        </tr>
+        </tbody>
+    </table>
+</tr>
 
 </body>
 </html>

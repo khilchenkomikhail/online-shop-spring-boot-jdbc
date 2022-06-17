@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title> Cart </title>
+</head>
+<body>
+
+Customer: <span th:text="${customer.getName()}"></span>  <span th:text="${customer.getSurname()}"></span>
+
+<br>
+
+Cart:
+
+<br>
+
+<table>
+    <thead>
+        <tr>
+            <th> Good </th>
+            <th> Amount </th>
+            <th> Price per unit </th>
+            <th> Total price </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="line: ${order.getOrderList()}">
+            <td><span th:text="${line.getGood().getName()}"> Good </span></td>
+            <td><span th:text="${line.getAmount()}"> Amount </span></td>
+            <td><span th:text="${line.getGood().getCost()}"> Price Per Unit </span></td>
+            <td><span th:text="${line.getAmount() * line.getGood().getCost()}"> Total price </span></td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+<br>
+
+<form method="post" action="http://localhost:8080/clear-cart">
+    <input type="hidden" name="customer_id" th:value="${customer.getId()}">
+    <input type="hidden" name="order_id" th:value="${order.getId()}">
+    <input type="submit" value="Clear Cart">
+</form>
+
+<br>
+<br>
+
+Add good
+
+<br>
+
+<form method="post" action="http://localhost:8080/add-to-cart">
+    <input type="hidden" name="customer_id" th:value="${customer.getId()}">
+    <input type="hidden" name="order_id" th:value="${order.getId()}">
+    <input name="good" type="text" id="good">
+    <label for="good"> Good name </label>
+    <br>
+    <input name="amount" type="number" id="amount">
+    <label for="amount"> Amount </label>
+    <br>
+    <input type="submit" value="Add to cart">
+</form>
+
+<br>
+<br>
+
+<a th:href="@{http://localhost:8080/main-page(customer=${customer.getId()})}"> Back to main page(continue with processing current cart) </a>
+
+<br>
+<br>
+
+Available goods:
+
+<br>
+<br>
+
+<table>
+    <thead>
+        <tr>
+            <th> Good </th>
+            <th> Price per unit </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="line : ${goods}">
+            <td><span th:text="${line.getName()}"> Good </span></td>
+            <td><span th:text="${line.getCost()}"> Price per unit </span></td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
