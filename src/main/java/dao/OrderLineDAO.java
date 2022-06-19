@@ -2,6 +2,7 @@ package dao;
 
 import domain.models.Good;
 import domain.models.OrderLine;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -15,6 +16,11 @@ import java.util.Map;
 
 @Component
 public class OrderLineDAO {
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    private ConnectionFactory connectionFactory;
+
     public List<OrderLine> getAllByOrderId(int id) throws DAOException {
         String selectStr = "select good_id, amount from order_lines where order_id = ?;";
         Connection connection = null;
@@ -24,7 +30,7 @@ public class OrderLineDAO {
         ArrayList<OrderLine> list = new ArrayList<>();
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(selectStr);
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
@@ -63,7 +69,7 @@ public class OrderLineDAO {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             for (OrderLine line : list) {
                 statement = connection.prepareStatement(insertStr);
                 statement.setInt(1, line.getOrder_id());
@@ -93,7 +99,7 @@ public class OrderLineDAO {
         PreparedStatement statement = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(deleteStr);
             statement.setInt(1, orderId);
             statement.execute();

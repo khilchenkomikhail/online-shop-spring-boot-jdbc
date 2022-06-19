@@ -1,12 +1,10 @@
 package dao;
 
 import domain.models.Good;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +12,11 @@ import java.util.Map;
 
 @Component
 public class GoodDAO {
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    private ConnectionFactory connectionFactory;
+
     public Good getById(int id) throws DAOException {
         String selectStr = "select name, price from goods where id = cast(? as bigint);";
 
@@ -24,7 +27,7 @@ public class GoodDAO {
         Good good = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(selectStr);
             statement.setInt(1, id);
 
@@ -68,7 +71,7 @@ public class GoodDAO {
         Good good = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(selectStr);
             statement.setString(1, goodName);
 
@@ -103,18 +106,19 @@ public class GoodDAO {
     }
 
     public int addGood(Good good) throws DAOException {
-        String insertStr = "insert into goods (name, price) values (?, ?) returning cast(id as integer);";
+        String insertStr = "insert into goods (name, price) values (?, ?);";
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         int id = -1;
 
         try {
-            connection = ConnectionFactory.getConnection();
-            statement = connection.prepareStatement(insertStr);
+            connection = connectionFactory.getConnection();
+            statement = connection.prepareStatement(insertStr, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, good.getName());
             statement.setInt(2, good.getCost());
-            resultSet = statement.executeQuery();
+            statement.execute();
+            resultSet = statement.getGeneratedKeys();
 
             resultSet.next();
             id = resultSet.getInt(1);
@@ -141,7 +145,7 @@ public class GoodDAO {
         PreparedStatement statement = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(updateStr);
             statement.setInt(1, good.getCost());
             statement.setInt(2, good.getId());
@@ -171,7 +175,7 @@ public class GoodDAO {
         ArrayList<Good> goods = new ArrayList<>();
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(selectStr);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {

@@ -2,12 +2,10 @@ package dao;
 
 import domain.models.Customer;
 import domain.models.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +13,11 @@ import java.util.Map;
 
 @Component
 public class OrderDAO {
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    private ConnectionFactory connectionFactory;
+
     public List<Order> getAllByCustomerId(int id) throws DAOException {
         String selectStr = "select id, is_processed from orders where customer_id = cast(? as bigint);";
         Connection connection = null;
@@ -24,7 +27,7 @@ public class OrderDAO {
         ArrayList<Order> orders = new ArrayList<>();
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(selectStr);
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
@@ -36,6 +39,7 @@ public class OrderDAO {
                 orders.add(order);
             }
         } catch (SQLException throwables) {
+            throwables.printStackTrace();
             throw new DAOException();
         } finally {
             try {
@@ -59,7 +63,7 @@ public class OrderDAO {
     }
 
     public Order setUpNewOrder(Order order) throws DAOException {
-        String insertStr = "insert into orders (customer_id, is_processed) values (cast(? as bigint), ?) returning id;";
+        String insertStr = "insert into orders (customer_id, is_processed) values (cast(? as bigint), ?);";
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -67,14 +71,16 @@ public class OrderDAO {
         Order newOrder = new Order(order);
 
         try {
-            connection = ConnectionFactory.getConnection();
-            statement = connection.prepareStatement(insertStr);
+            connection = connectionFactory.getConnection();
+            statement = connection.prepareStatement(insertStr, Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1, order.getCustomer_id());
             statement.setBoolean(2, order.isProcessed());
-            resultSet = statement.executeQuery();
+            statement.execute();
+            resultSet = statement.getGeneratedKeys();
             resultSet.next();
             newOrder.setId(resultSet.getInt(1));
         } catch (SQLException throwables) {
+            throwables.printStackTrace();
             throw new DAOException();
         } finally {
             try {
@@ -98,18 +104,19 @@ public class OrderDAO {
     }
 
     public void updateOrder(Order order) throws DAOException {
-        String insertStr = "update orders set customer_id = cast(? as bigint), is_processed = ? where id = cast(? as bigint);";
+        String updateStr = "update orders set customer_id = cast(? as bigint), is_processed = ? where id = cast(? as bigint);";
         Connection connection = null;
         PreparedStatement statement = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
-            statement = connection.prepareStatement(insertStr);
+            connection = connectionFactory.getConnection();
+            statement = connection.prepareStatement(updateStr);
             statement.setInt(1, order.getCustomer_id());
             statement.setBoolean(2, order.isProcessed());
             statement.setInt(3, order.getId());
             statement.execute();
         } catch (SQLException throwables) {
+            throwables.printStackTrace();
             throw new DAOException();
         } finally {
             try {
@@ -134,7 +141,7 @@ public class OrderDAO {
         Order order = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(selectStr);
             statement.setInt(1, id);
             resultSet = statement.executeQuery();

@@ -4,6 +4,7 @@ import domain.models.Customer;
 import domain.models.Order;
 import domain.utils.CustomerUtils;
 import domain.utils.OrderUtils;
+import domain.utils.UtilException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +49,7 @@ public class CustomerController {
         customerUtils.addCustomer(customer);
 
         model.addAttribute("customer", customer);
-        model.addAttribute("orders", orderUtils.getAllByCustomer(customer));
+        addOrdersToModel(customer, model);
         return  "/customer-pages/customer-page";
     }
 
@@ -57,7 +58,12 @@ public class CustomerController {
                                 @RequestParam("surname") String surname,
                                 @RequestParam("password") String password,
                                 Model model) {
-        Customer customer = customerUtils.getCustomerByName(name, surname);
+        Customer customer = null;
+        try {
+            customer = customerUtils.getCustomerByName(name, surname);
+        } catch (UtilException e) {
+            return "/customer-pages/tmpplug";
+        }
 
         if (customer.getPassword().equals(password)) {
             addOrdersToModel(customer, model);
@@ -84,7 +90,13 @@ public class CustomerController {
                            Model model) {
         customerUtils.addMoneyToCustomer(name, surname, money);
 
-        Customer customer = customerUtils.getCustomerByName(name, surname);
+        Customer customer = null;
+        try {
+            customer = customerUtils.getCustomerByName(name, surname);
+        } catch (UtilException e) {
+            e.printStackTrace();
+            throw new IllegalStateException();
+        }
         model.addAttribute("customer", customer);
         addOrdersToModel(customer, model);
         return "/customer-pages/customer-page";

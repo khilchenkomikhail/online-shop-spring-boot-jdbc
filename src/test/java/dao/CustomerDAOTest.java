@@ -2,19 +2,27 @@ package dao;
 
 import domain.models.Customer;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@ExtendWith(SpringExtension.class)
+@Import(DAOTestContextConfiguration.class)
 class CustomerDAOTest {
 
-    CustomerDAO customerDAO = new CustomerDAO();
+    @Autowired
+    CustomerDAO customerDAO;
 
     @Test
-    @Order(1)
     void getById() {
         Customer customer = null;
         try {
@@ -28,7 +36,6 @@ class CustomerDAOTest {
     }
 
     @Test
-    @Order(2)
     void getIdByName() {
         String name = "Mark";
         String surname = "Hey";
@@ -41,15 +48,15 @@ class CustomerDAOTest {
         }
     }
 
-    private int tmpId = 2;
-
     @Test
-    @Order(3)
     void addCustomer() {
         Customer customer = new Customer("AddDeleteName", "AddDeleteSurname", "AddDeletePassword");
-        customer.setMoney(500);
         try {
-            tmpId = customerDAO.addCustomer(customer);
+            int id = customerDAO.addCustomer(customer);
+            Customer tmp = customerDAO.getById(id);
+            Assertions.assertEquals("AddDeleteName", tmp.getName());
+            Assertions.assertEquals("AddDeleteSurname", tmp.getSurname());
+            Assertions.assertEquals("AddDeletePassword", tmp.getPassword());
         } catch (DAOException e) {
             e.printStackTrace();
             fail();
@@ -58,19 +65,24 @@ class CustomerDAOTest {
 
 
     @Test
-    @Order(4)
     void updateById() {
-        if (tmpId == -500) {
-            fail();
-        }
-        Customer customer = new Customer("AddDeleteName-Updated", "AddDeleteSurname-Updated", "AddDeletePassword-Updated");
-        customer.setMoney(1000);
+        Customer customer = new Customer("UpdateName", "UpdateSurname", "UpdatePassword");
+        customer.setMoney(100);
+        Customer customerUpdated = new Customer("UpdateName-updated", "UpdateSurname-updated", "UpdatePassword-updated");
+        customerUpdated.setMoney(1000);
         try {
-            customerDAO.updateById(tmpId, customer);
-            Customer tmp = customerDAO.getById(tmpId);
-            Assertions.assertEquals("AddDeleteName-Updated", tmp.getName());
-            Assertions.assertEquals("AddDeleteSurname-Updated", tmp.getSurname());
-            Assertions.assertEquals("AddDeletePassword-Updated", tmp.getPassword());
+            int id = customerDAO.addCustomer(customer);
+            Customer tmp = customerDAO.getById(id);
+            Assertions.assertEquals("UpdateName", tmp.getName());
+            Assertions.assertEquals("UpdateSurname", tmp.getSurname());
+            Assertions.assertEquals("UpdatePassword", tmp.getPassword());
+            Assertions.assertEquals(100, tmp.getMoney());
+
+            customerDAO.updateById(id, customerUpdated);
+            tmp = customerDAO.getById(id);
+            Assertions.assertEquals("UpdateName-updated", tmp.getName());
+            Assertions.assertEquals("UpdateSurname-updated", tmp.getSurname());
+            Assertions.assertEquals("UpdatePassword-updated", tmp.getPassword());
             Assertions.assertEquals(1000, tmp.getMoney());
         } catch (DAOException e) {
             e.printStackTrace();
@@ -79,17 +91,25 @@ class CustomerDAOTest {
     }
 
     @Test
-    @Order(5)
     void updateMoney() {
-        if (tmpId == -500) {
-            fail();
-        }
+        Customer customer = new Customer("UpdateMoneyName", "UpdateMoneySurname", "UpdateMoneyPassword");
+        customer.setMoney(100);
         try {
-            Customer customer = customerDAO.getById(tmpId);
+            int id = customerDAO.addCustomer(customer);
+            Customer tmp = customerDAO.getById(id);
+            Assertions.assertEquals("UpdateMoneyName", tmp.getName());
+            Assertions.assertEquals("UpdateMoneySurname", tmp.getSurname());
+            Assertions.assertEquals("UpdateMoneyPassword", tmp.getPassword());
+            Assertions.assertEquals(100, tmp.getMoney());
+
+
             customer.setMoney(100500);
             customerDAO.updateMoney(customer);
-            customer = customerDAO.getById(tmpId);
-            Assertions.assertEquals(100500, customer.getMoney());
+            tmp = customerDAO.getById(id);
+            Assertions.assertEquals("UpdateMoneyName", tmp.getName());
+            Assertions.assertEquals("UpdateMoneySurname", tmp.getSurname());
+            Assertions.assertEquals("UpdateMoneyPassword", tmp.getPassword());
+            Assertions.assertEquals(100500, tmp.getMoney());
         } catch (DAOException e) {
             e.printStackTrace();
             fail();
@@ -97,17 +117,25 @@ class CustomerDAOTest {
     }
 
     @Test
-    @Order(6)
     void updatePassword() {
-        if (tmpId == -500) {
-            fail();
-        }
+        Customer customer = new Customer("UpdatePasswordName", "UpdatePasswordSurname", "UpdatePasswordPassword");
+        customer.setMoney(100);
         try {
-            Customer customer = customerDAO.getById(tmpId);
-            customer.setPassword("Sole-password-update");
+            int id = customerDAO.addCustomer(customer);
+            Customer tmp = customerDAO.getById(id);
+            Assertions.assertEquals("UpdatePasswordName", tmp.getName());
+            Assertions.assertEquals("UpdatePasswordSurname", tmp.getSurname());
+            Assertions.assertEquals("UpdatePasswordPassword", tmp.getPassword());
+            Assertions.assertEquals(100, tmp.getMoney());
+
+            customer.setPassword("UpdatePasswordPassword-updated");
+
             customerDAO.updatePassword(customer);
-            customer = customerDAO.getById(tmpId);
-            Assertions.assertEquals("Sole-password-update", customer.getPassword());
+            tmp = customerDAO.getById(id);
+            Assertions.assertEquals("UpdatePasswordName", tmp.getName());
+            Assertions.assertEquals("UpdatePasswordSurname", tmp.getSurname());
+            Assertions.assertEquals("UpdatePasswordPassword-updated", tmp.getPassword());
+            Assertions.assertEquals(100, tmp.getMoney());
         } catch (DAOException e) {
             e.printStackTrace();
             fail();
@@ -115,14 +143,19 @@ class CustomerDAOTest {
     }
 
     @Test
-    @Order(7)
     void deleteById() {
-        if (tmpId == -500) {
-            fail();
-        }
+        Customer customer = new Customer("DeleteName", "DeleteSurname", "DeletePassword");
+        customer.setMoney(100);
         try {
-            customerDAO.deleteById(tmpId);
-            Assertions.assertThrowsExactly(DAOException.class, () -> customerDAO.getById(tmpId));
+            int id = customerDAO.addCustomer(customer);
+            Customer tmp = customerDAO.getById(id);
+            Assertions.assertEquals("DeleteName", tmp.getName());
+            Assertions.assertEquals("DeleteSurname", tmp.getSurname());
+            Assertions.assertEquals("DeletePassword", tmp.getPassword());
+            Assertions.assertEquals(100, tmp.getMoney());
+
+            customerDAO.deleteById(id);
+            Assertions.assertThrowsExactly(DAOException.class, () -> customerDAO.getById(id));
         } catch (DAOException e) {
             e.printStackTrace();
             fail();

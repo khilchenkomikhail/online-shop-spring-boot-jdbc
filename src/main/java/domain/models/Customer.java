@@ -15,19 +15,6 @@ public class Customer {
         this.password = password;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return money == customer.money && Objects.equals(name, customer.name) && Objects.equals(password, customer.password);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, password, money);
-    }
-
     public Customer(Customer otherCustomer) {
         this.name = new String(otherCustomer.getName());
         this.password = new String(otherCustomer.getPassword());

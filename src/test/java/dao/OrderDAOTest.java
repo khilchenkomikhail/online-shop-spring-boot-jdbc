@@ -3,14 +3,21 @@ package dao;
 import domain.models.Order;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(SpringExtension.class)
+@Import(DAOTestContextConfiguration.class)
 class OrderDAOTest {
 
-    OrderDAO orderDAO = new OrderDAO();
+    @Autowired
+    OrderDAO orderDAO;
 
     @Test
     void getAllByCustomerId() {

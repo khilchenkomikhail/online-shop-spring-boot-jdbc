@@ -1,17 +1,24 @@
 package dao;
 
 import domain.models.Customer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 @Component
 public class CustomerDAO {
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    private ConnectionFactory connectionFactory;
+
+    public Class getConnectionFactoryClass() {
+        return connectionFactory.getClass();
+    }
+
     public Customer getById(int id) throws DAOException {
-        String selectSQL = "select name, surname, password, money from customers where id = Cast( ? AS bigint);";
+        String selectSQL = "select name, surname, password, money from customers where id = cast(? as bigint);";
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -19,7 +26,7 @@ public class CustomerDAO {
         Customer customer = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             preparedStatement = connection.prepareStatement(selectSQL);
 
             preparedStatement.setInt(1 , id);
@@ -36,6 +43,7 @@ public class CustomerDAO {
             customer.setMoney(money);
             customer.setId(id);
         } catch (SQLException throwables) {
+            throwables.printStackTrace();
             throw new DAOException();
         }
         finally {
@@ -67,7 +75,7 @@ public class CustomerDAO {
         ResultSet resultSet = null;
         int id = -1;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             preparedStatement = connection.prepareStatement(sqlSelect);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, surname);
@@ -113,7 +121,7 @@ public class CustomerDAO {
         Customer customer = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             preparedStatement = connection.prepareStatement(selectSQL);
 
             preparedStatement.setString(1, name);
@@ -156,7 +164,7 @@ public class CustomerDAO {
     }
 
     public int addCustomer(Customer customer) throws DAOException {
-        String insertStr = "insert into customers (name, surname, money, password) values (?, ?, cast(? as integer), ?) returning id;";
+        String insertStr = "insert into customers (name, surname, money, password) values (?, ?, cast(? as integer), ?);";
 
         Connection connection = null;
         PreparedStatement statement = null;
@@ -165,14 +173,14 @@ public class CustomerDAO {
         int newId = -1;
 
         try {
-            connection = ConnectionFactory.getConnection();
-            statement = connection.prepareStatement(insertStr);
+            connection = connectionFactory.getConnection();
+            statement = connection.prepareStatement(insertStr, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getSurname());
             statement.setInt(3, customer.getMoney());
             statement.setString(4, customer.getPassword());
-
-            resultSet = statement.executeQuery();
+            statement.execute();
+            resultSet = statement.getGeneratedKeys();
 
             resultSet.next();
 
@@ -207,7 +215,7 @@ public class CustomerDAO {
         PreparedStatement statement = null;
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(deleteStr);
             statement.setInt(1, id);
             statement.execute();
@@ -236,7 +244,7 @@ public class CustomerDAO {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(updateStr);
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getSurname());
@@ -266,7 +274,7 @@ public class CustomerDAO {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(updateStr);
             statement.setInt(1, customer.getMoney());
             statement.setString(2, customer.getName());
@@ -294,7 +302,7 @@ public class CustomerDAO {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = connectionFactory.getConnection();
             statement = connection.prepareStatement(updateStr);
             statement.setString(1, customer.getPassword());
             statement.setString(2, customer.getName());

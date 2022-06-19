@@ -18,7 +18,8 @@ public class CustomerUtils {
 
     public void addCustomer(Customer customer) {
         try {
-            customerDAO.addCustomer(customer);
+            int id = customerDAO.addCustomer(customer);
+            customer.setId(id);
         } catch (DAOException e) {
             e.printStackTrace();
         }
@@ -42,12 +43,12 @@ public class CustomerUtils {
         }
     }
 
-    public Customer getCustomerByName(String name, String surname) {
+    public Customer getCustomerByName(String name, String surname) throws UtilException {
         Customer customer = null;
         try {
             customer = customerDAO.getByName(name, surname);
         } catch (DAOException e) {
-            throw new IllegalArgumentException();
+            throw new UtilException();
         }
         return customer;
     }
