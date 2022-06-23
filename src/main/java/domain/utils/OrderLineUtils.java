@@ -1,16 +1,15 @@
 package domain.utils;
 
 import dao.DAOException;
-import dao.OrderDAO;
 import dao.OrderLineDAO;
 import domain.models.Order;
 import domain.models.OrderLine;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 public class OrderLineUtils {
     @Autowired
     private OrderLineDAO orderLineDAO;

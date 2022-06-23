@@ -8,11 +8,11 @@ import domain.models.Good;
 import domain.models.Order;
 import domain.models.OrderLine;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 public class OrderUtils {
 
     @Autowired
@@ -59,8 +59,7 @@ public class OrderUtils {
         OrderLine newLine = new OrderLine();
         newLine.setGood(good);
         newLine.setAmount(amount);
-        newLine.setGood_id(good.getId());
-        newLine.setOrder_id(order.getId());
+        newLine.setGood_id(good.getId());        newLine.setOrder_id(order.getId());
         newLine.setReady(true);
 
         order.addOrderLine(newLine);

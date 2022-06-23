@@ -4,11 +4,9 @@ import dao.CustomerDAO;
 import dao.DAOException;
 import domain.models.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
-@Component
+@Service
 public class CustomerUtils {
     private final CustomerDAO customerDAO;
 
