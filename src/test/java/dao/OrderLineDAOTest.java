@@ -21,6 +21,11 @@ class OrderLineDAOTest {
     OrderLineDAO orderLineDAO;
 
     @Test
+    void testToFail() {
+        fail();
+    }
+
+    @Test
     void getAllByOrderId() {
         try {
             List<OrderLine> list = orderLineDAO.getAllByOrderId(1);
