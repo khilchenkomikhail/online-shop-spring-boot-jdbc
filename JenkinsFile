@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
+                git 'https://github.com/khilchenkomikhail/online-shop-spring-boot-jdbc/projects?query=is%3Aopen'
                 sh 'mvn test'
             }
         }
